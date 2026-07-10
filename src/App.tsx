@@ -11,7 +11,7 @@ import Contact from './pages/Contact'
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname])
   return null
 }
@@ -21,16 +21,14 @@ export default function App() {
     <>
       <ScrollToTop />
       <Nav />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/work" element={<Work />} />
-          <Route path="/work/:slug" element={<WorkDetail />} />
-          <Route path="/studio" element={<Studio />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/work" element={<Work />} />
+        <Route path="/work/:slug" element={<WorkDetail />} />
+        <Route path="/studio" element={<Studio />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
       <Footer />
     </>
   )

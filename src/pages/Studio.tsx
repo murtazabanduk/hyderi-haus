@@ -1,114 +1,71 @@
 import { Link } from 'react-router-dom'
-import { site } from '../data/site'
-import { testimonials } from '../data/testimonials'
 import Reveal from '../components/Reveal'
+import { services, site } from '../data/site'
 
 export default function Studio() {
   return (
-    <>
-      <section className="detail-head">
-        <div className="container">
-          <p className="mono u-muted" style={{ marginBottom: 18 }}>
-            Sheet A-200 · The practice · {site.city}
-          </p>
-          <h1 className="display display-lg" style={{ marginBottom: 16 }}>
-            The practice
-          </h1>
-          <p className="serif-lede" style={{ maxWidth: '48ch' }}>
-            {site.statement}
-          </p>
-        </div>
-      </section>
+    <main className="page">
+      <header className="page-head">
+        <span className="mono kicker">THE PRACTICE</span>
+        <h1 className="page-title">STUDIO</h1>
+      </header>
 
-      <section className="sheet" style={{ paddingTop: 'clamp(32px, 4vw, 56px)' }}>
-        <div className="container">
-          <div className="split">
-            <Reveal>
-              <div className="prose">
-                {site.bio.map((para) => (
-                  <p key={para.slice(0, 24)}>{para}</p>
-                ))}
-              </div>
-              <div className="meta-table" style={{ marginTop: 44 }}>
-                {site.credentials.map((c, i) => (
-                  <div className="cred-row" key={i}>
-                    <span className="mono u-muted">{c.label}</span>
-                    <span className="val" style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5 }}>
-                      {c.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-            <Reveal delay={120}>
-              <div className="portrait-panel">
-                <span className="mono">
-                  Portrait · {site.principal}
-                  <br />
-                  Photograph pending issue
-                </span>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <Reveal>
+        <p className="serif studio-statement">
+          {site.name} is the architecture practice of {site.principal} — buildings, interiors and images made with
+          equal seriousness, from {site.city}.
+        </p>
+      </Reveal>
 
-      <section className="sheet">
-        <div className="container">
-          <div className="sheet-head mono">
-            <span>
-              <b>SH-05</b> · Services
-            </span>
-            <span>Full scope · concept to handover</span>
+      <div className="studio-grid">
+        <Reveal>
+          <div className="studio-block">
+            <span className="mono kicker">EDUCATION</span>
+            <p>
+              {site.principal} trained at the {site.school}, where the Monument Design project — a folded concrete
+              cultural landmark — was awarded a certificate for excellent work in 2025.
+            </p>
           </div>
-          <div className="services-list" style={{ maxWidth: 820 }}>
-            {site.services.map((s) => (
-              <div className="service-row" key={s.id}>
-                <span className="mono">{s.id}</span>
+        </Reveal>
+        <Reveal delay={100}>
+          <figure className="studio-cert studio-cert-lg">
+            <img src="/photos/certificate.jpg" alt="Certificate for excellent work awarded to Hussain Hyderi at the National College of Arts, Rawalpindi" loading="lazy" />
+            <figcaption className="mono">CERTIFICATE FOR EXCELLENT WORK — MONUMENT DESIGN, NCA RAWALPINDI, 2025</figcaption>
+          </figure>
+        </Reveal>
+      </div>
+
+      <section className="studio-services">
+        <span className="mono kicker">WHAT THE STUDIO DOES</span>
+        <ul>
+          {services.map((s, i) => (
+            <Reveal key={s.index} delay={i * 70}>
+              <li>
+                <span className="mono svc-idx">{s.index}</span>
                 <div>
-                  <div className="service-name">{s.name}</div>
-                  <div className="service-detail">{s.detail}</div>
+                  <h3>{s.name}</h3>
+                  <p>{s.detail}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              </li>
+            </Reveal>
+          ))}
+        </ul>
       </section>
 
-      <section className="sheet">
-        <div className="container">
-          <div className="sheet-head mono">
-            <span>
-              <b>SH-06</b> · Client record
-            </span>
-            <span>As noted on handover</span>
-          </div>
-          <div className="quotes">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 110}>
-                <figure className="quote">
-                  <blockquote>{t.quote}</blockquote>
-                  <figcaption className="mono">
-                    <b>{t.name}</b>
-                    {t.role} · {t.project}
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
+      <Reveal>
+        <div className="studio-mark">
+          <img src="/photos/logo.jpg" alt="Hyderi Haus logo — two H letterforms drawn as buildings" loading="lazy" />
+          <div>
+            <p className="serif">
+              The mark is two letters drawn as buildings — a house and a tower sharing one wall. Architecture, design,
+              space.
+            </p>
+            <Link className="btn" to="/contact">
+              Work with us <span aria-hidden>→</span>
+            </Link>
           </div>
         </div>
-      </section>
-
-      <section className="band-dark cta-band">
-        <div className="container">
-          <p className="mono u-muted" style={{ marginBottom: 24 }}>
-            New commissions — {new Date().getFullYear()}
-          </p>
-          <h2 className="display display-lg">
-            Work with the studio — <Link to="/contact">get in touch</Link>
-          </h2>
-        </div>
-      </section>
-    </>
+      </Reveal>
+    </main>
   )
 }

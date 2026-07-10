@@ -1,159 +1,135 @@
 import { Link } from 'react-router-dom'
-import { site } from '../data/site'
-import { featuredProjects } from '../data/projects'
-import { testimonials } from '../data/testimonials'
+import ZoomHero from '../components/ZoomHero'
 import ProjectCard from '../components/ProjectCard'
-import ShowcaseCard from '../components/ShowcaseCard'
 import Reveal from '../components/Reveal'
-import HeroScene from '../three/HeroScene'
+import { featuredProjects, posters } from '../data/projects'
+import { site } from '../data/site'
 
 export default function Home() {
   return (
-    <>
-      {/* ------------------------------------------------ hero / cover sheet */}
-      <section className="hero">
-        <div className="hero-canvas" aria-hidden="true">
-          <HeroScene />
-        </div>
+    <main>
+      <ZoomHero />
 
-        <div className="hero-corner tr mono rise d3">
-          Sheet A-000 · Cover
-          <br />
-          {site.coordinates}
-        </div>
-        <div className="hero-corner br mono rise d4">
-          Est. {site.established} · COA Registered
-          <br />
-          Scroll — Section A-A ↓
-        </div>
-
-        <div className="container hero-content">
-          <p className="hero-eyebrow mono rise d1">
-            {site.name} · {site.tagline} · {site.city}
-          </p>
-          <h1 className="display display-xl hero-title">
-            <span className="rise d1" style={{ display: 'block' }}>
-              Buildings
-            </span>
-            <span className="rise d2" style={{ display: 'block' }}>
-              that age well
-            </span>
-          </h1>
-          <div className="hero-foot">
-            <p className="serif-lede rise d3">{site.statement}</p>
-            <span className="rise d4">
-              <Link to="/work" className="btn-line">
-                View selected work <span className="arr">→</span>
-              </Link>
-            </span>
-          </div>
+      <section className="sec">
+        <header className="sec-head">
+          <span className="mono sec-no">01</span>
+          <h2 className="sec-title">SELECTED WORKS</h2>
+          <Link className="mono sec-link" to="/work">
+            ALL PROJECTS →
+          </Link>
+        </header>
+        <div className="works-grid">
+          {featuredProjects.map((p, i) => (
+            <Reveal key={p.slug} delay={(i % 2) * 90}>
+              <ProjectCard project={p} />
+            </Reveal>
+          ))}
         </div>
       </section>
 
-      {/* ------------------------------------------------ selected works */}
-      <section className="sheet">
-        <div className="container">
-          <div className="sheet-head mono">
-            <span>
-              <b>SH-01</b> · Selected work
-            </span>
-            <span>{featuredProjects.length} of 6 projects · each opens as a 3D maquette</span>
-          </div>
-          <div className="works-grid">
-            {featuredProjects.map((p, i) => (
-              <Reveal key={p.slug} delay={(i % 2) * 90}>
-                {p.showcase ? <ShowcaseCard project={p} /> : <ProjectCard project={p} />}
-              </Reveal>
-            ))}
-          </div>
+      <section className="sec sec-dark sec-print">
+        <header className="sec-head">
+          <span className="mono sec-no">02</span>
+          <h2 className="sec-title">IN PRINT</h2>
+        </header>
+        <div className="print-band">
           <Reveal>
-            <div style={{ marginTop: 'clamp(40px, 5vw, 72px)' }}>
-              <Link to="/work" className="btn-line">
-                Index of all works <span className="arr">→</span>
-              </Link>
+            <figure className="poster poster-l">
+              <img src={posters[0].src} alt={posters[0].alt} loading="lazy" />
+            </figure>
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="print-copy">
+              <p className="serif">
+                The studio also works on paper — poster editions that argue for material honesty in type as bold as
+                the buildings.
+              </p>
+              <p className="mono dimmed">SELF-PUBLISHED EDITIONS — CONCRETE SERIES</p>
             </div>
+          </Reveal>
+          <Reveal delay={200}>
+            <figure className="poster poster-r">
+              <img src={posters[1].src} alt={posters[1].alt} loading="lazy" />
+            </figure>
           </Reveal>
         </div>
       </section>
 
-      {/* ------------------------------------------------ practice */}
-      <section className="sheet">
-        <div className="container">
-          <div className="sheet-head mono">
-            <span>
-              <b>SH-02</b> · The practice
-            </span>
-            <span>{site.principal} · Est. {site.established}</span>
-          </div>
-          <div className="split">
-            <Reveal>
-              <p className="serif-lede" style={{ marginBottom: 28 }}>
-                A building is judged in the round — so the studio designs in the round: card
-                models, digital maquettes, and drawings you can hold up to the light.
+      <section className="sec sec-process">
+        <header className="sec-head">
+          <span className="mono sec-no">03</span>
+          <h2 className="sec-title">PROCESS</h2>
+        </header>
+        <div className="process-grid">
+          <Reveal>
+            <figure className="process-fig">
+              <img src="/photos/monument-sketches.jpg" alt="Wall of concept sketches iterating the folded form of The Monument" loading="lazy" />
+              <figcaption className="mono">CONCEPT WALL — THE MONUMENT</figcaption>
+            </figure>
+          </Reveal>
+          <div className="process-copy">
+            <Reveal delay={100}>
+              <p className="serif process-lede">
+                Every building starts as an argument on paper. The fold of the Monument was drawn a hundred ways —
+                as ridgeline, as ledger, as roof — before the first model was built.
               </p>
-              <div className="prose">
-                <p>{site.bio[0]}</p>
-              </div>
-              <div style={{ marginTop: 36 }}>
-                <Link to="/studio" className="btn-line">
-                  About the principal <span className="arr">→</span>
-                </Link>
-              </div>
             </Reveal>
-            <Reveal delay={120}>
-              <div className="services-list">
-                {site.services.map((s) => (
-                  <div className="service-row" key={s.id}>
-                    <span className="mono">{s.id}</span>
-                    <div>
-                      <div className="service-name">{s.name}</div>
-                      <div className="service-detail">{s.detail}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <Reveal delay={180}>
+              <figure className="process-fig-sm">
+                <img src="/photos/monument-sketch.jpg" alt="Hand-drawn perspective sketch of the folded roof massing" loading="lazy" />
+                <figcaption className="mono">FIRST MASSING SKETCH</figcaption>
+              </figure>
+            </Reveal>
+            <Reveal delay={240}>
+              <Link className="btn" to="/work/the-monument">
+                Follow the fold <span aria-hidden>→</span>
+              </Link>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------ testimonials */}
-      <section className="sheet">
-        <div className="container">
-          <div className="sheet-head mono">
-            <span>
-              <b>SH-03</b> · Client record
-            </span>
-            <span>As noted on handover</span>
-          </div>
-          <div className="quotes">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 110}>
-                <figure className="quote">
-                  <blockquote>{t.quote}</blockquote>
-                  <figcaption className="mono">
-                    <b>{t.name}</b>
-                    {t.role} · {t.project}
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
+      <section className="sec sec-studio-teaser">
+        <div className="studio-teaser">
+          <Reveal>
+            <div>
+              <span className="mono sec-no">04 — STUDIO</span>
+              <p className="serif studio-lede">
+                {site.name} is the practice of {site.principal} — trained at the {site.school}, and recognised there
+                for the Monument Design project. Buildings, interiors and images, made with equal seriousness.
+              </p>
+              <Link className="btn" to="/studio">
+                About the studio <span aria-hidden>→</span>
+              </Link>
+            </div>
+          </Reveal>
+          <Reveal delay={140}>
+            <figure className="studio-cert">
+              <img src="/photos/certificate.jpg" alt="Certificate for excellent work awarded to Hussain Hyderi, National College of Arts Rawalpindi" loading="lazy" />
+              <figcaption className="mono">CERTIFICATE FOR EXCELLENT WORK — NCA, 2025</figcaption>
+            </figure>
+          </Reveal>
         </div>
       </section>
 
-      {/* ------------------------------------------------ CTA */}
-      <section className="band-dark cta-band">
-        <div className="container">
-          <p className="mono u-muted" style={{ marginBottom: 24 }}>
-            SH-04 · New commissions — {new Date().getFullYear()}
-          </p>
-          <h2 className="display display-lg">
-            Start a project —{' '}
-            <Link to="/contact">let’s talk</Link>
+      <section className="sec sec-dark sec-cta">
+        <Reveal>
+          <span className="mono sec-no">05 — CONTACT</span>
+          <h2 className="cta-word">
+            LET’S BUILD
+            <br />
+            SOMETHING THAT LASTS
           </h2>
-        </div>
+          <div className="cta-row">
+            <Link className="btn btn-light" to="/contact">
+              Start a project <span aria-hidden>→</span>
+            </Link>
+            <a className="mono cta-mail" href={`mailto:${site.email}`}>
+              {site.email}
+            </a>
+          </div>
+        </Reveal>
       </section>
-    </>
+    </main>
   )
 }

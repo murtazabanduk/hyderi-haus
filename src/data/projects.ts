@@ -1,161 +1,220 @@
 // ---------------------------------------------------------------------------
-// Project index. Each entry drives its card, its drawing, its detail page and
-// its 3D maquette.
-//
-// To use a real 3D render instead of the built-in procedural maquette:
-//   1. Export the model as .glb and drop it in  public/models/<slug>.glb
-//   2. Set  model: '/models/<slug>.glb'  on the project below.
-// To add photography / renders:
-//   drop images in  public/images/<slug>/  and list them under  images: [...]
+// The real Hyderi Haus portfolio, built from the studio's own renders and
+// drawings in /public/photos. Copy is a first draft — edit freely.
 // ---------------------------------------------------------------------------
+
+export type ProjectImage = {
+  src: string
+  alt: string
+  caption?: string
+  /** Span the full gallery width. */
+  wide?: boolean
+}
 
 export type Project = {
   slug: string
   index: string
   name: string
-  typology: 'Residential' | 'Commercial' | 'Cultural' | 'Public'
+  typology: 'Cultural' | 'Mixed-use' | 'Healthcare' | 'Urban' | 'Residential' | 'Interiors'
   location: string
   year: string
-  status: 'Completed' | 'Under construction' | 'In design' | 'Competition'
-  area: string
-  client: string
+  status: string
   summary: string
   body: string[]
-  materials: string[]
-  /** Optional path to a .glb file in /public. Falls back to procedural maquette. */
-  model?: string
-  /** Optional image paths in /public. */
-  images?: string[]
-  featured: boolean
-  /** Marks the one flagship project with the full 3D showcase treatment. */
-  showcase?: boolean
+  materials?: string[]
+  cover: string
+  images: ProjectImage[]
+  videos?: { src: string; caption: string }[]
+  featured?: boolean
+  /** The flagship project shown in the home-page zoom hero. */
+  flagship?: boolean
 }
 
 export const projects: Project[] = [
   {
-    slug: 'veil-house',
-    index: 'PRJ-01',
-    name: 'The Veil House',
-    typology: 'Residential',
-    location: 'Alibaug, Maharashtra',
-    year: '2023',
-    status: 'Completed',
-    area: '680 m²',
-    client: 'Private',
-    summary:
-      'A weekend house wrapped in a perforated brick veil — closed to the road, open to a shaded court.',
-    body: [
-      'The site faces a busy approach road on the west and a mango orchard on the east. The house resolves this in one move: a two-storey brick screen runs the full length of the street edge, and everything private happens behind it. The screen is laid in a stack bond with every third brick omitted, so the wall reads as solid by day and as a lantern by night.',
-      'Behind the veil, rooms are arranged around a court that stays in shade from ten in the morning. The court floor is rough Kota stone that cools under monsoon rain; the family reports that the court, not the living room, is where guests end up.',
-    ],
-    materials: ['Perforated brick screen, stack bond', 'Kota stone flooring', 'Exposed RCC frame', 'Reclaimed teak shutters'],
-    featured: true,
-  },
-  {
-    slug: 'terrace-tower',
-    index: 'PRJ-02',
-    name: 'Terrace Tower',
-    typology: 'Commercial',
-    location: 'Baner, Pune',
-    year: '2024',
-    status: 'Under construction',
-    area: '12,400 m²',
-    client: 'Mirae Developments',
-    summary:
-      'A mixed-use mid-rise that steps back floor by floor, trading rentable area for planted terraces on every level.',
-    body: [
-      'The brief asked for the maximum permissible envelope. The studio argued for one degree less: each office floor steps back 1.8 metres from the one below, and the surrendered strip becomes a continuous planted terrace. Every tenancy gets an outdoor room; the building gets a section that shades itself.',
-      'The stepped form does structural work too — columns transfer along the setback line, keeping office plates clear-span. Retail holds the street edge under a double-height colonnade.',
-    ],
-    materials: ['Board-marked concrete', 'Planted setback terraces', 'Anodised aluminium screens', 'Clear-span PT slabs'],
-    featured: true,
-  },
-  {
-    slug: 'fold-institute',
-    index: 'PRJ-03',
-    name: 'The Fold Institute',
+    slug: 'the-monument',
+    index: '01',
+    name: 'The Monument',
     typology: 'Cultural',
-    location: 'Mahabaleshwar, Maharashtra',
-    year: '2023',
-    status: 'Completed',
-    area: '6,800 m²',
-    client: 'Sahyadri Research Trust',
-    summary:
-      'A research and exhibition campus roofed in a single origami-folded concrete plate — three wings under one broken sky.',
-    body: [
-      'The brief was a valley-floor campus for a trust that studies the Western Ghats: labs, an archive and a public gallery, none of which wanted to compete with the hills behind them. The studio\'s answer was to stop building walls and start folding a roof — one continuous plate, creased along diagonals like a sheet of dropped paper, that shelters all three wings and reads from the ridge above as a single fifth elevation.',
-      'Under the folds, the walls do the opposite of the roof: they lean outward from the base, board-formed in narrow bays that read as concrete fins from the drive but open into full-height glass the moment you\'re past the treeline. Every crease in the roof throws a different shadow through the glass, so the deepest labs — the ones with no windows of their own — still know the hour and the weather from the light alone.',
-      'The building is entered up a full-width flight of stepped plinth, so the first view of the valley is held back until you\'re standing under the roof\'s widest cantilever, looking out from the shade it makes.',
-    ],
-    materials: [
-      'Folded RCC roof plate, post-tensioned',
-      'Board-formed concrete fin walls, outward batter',
-      'Full-height curtain glazing, dark anodised mullions',
-      'Cast stone plinth and stepped entry',
-    ],
-    featured: true,
-    showcase: true,
-  },
-  {
-    slug: 'kiln-gallery',
-    index: 'PRJ-04',
-    name: 'Kiln Gallery',
-    typology: 'Cultural',
-    location: 'Vadodara, Gujarat',
-    year: '2021',
-    status: 'Completed',
-    area: '950 m²',
-    client: 'Sarabhai Arts Trust',
-    summary:
-      'Three vaulted brick bars for a private art collection — daylight bounced twice before it touches a canvas.',
-    body: [
-      'The collection is mostly works on paper, which rules out direct light. The gallery answers with three parallel brick vaults of different lengths, each lit by a north slot at the springing line. Light hits the vault, then the floor, then the work — twice bounced, halved in intensity, and utterly even.',
-      'The vaults are true structural masonry, built by a team of bricklayers from Bharuch over eleven months. The building has no applied finishes; the maintenance manual is one page.',
-    ],
-    materials: ['Structural brick vaults', 'North-light slots', 'Lime-washed interiors', 'IPS floor with brass strips'],
-    featured: true,
-  },
-  {
-    slug: 'stack-house',
-    index: 'PRJ-05',
-    name: 'Stack House',
-    typology: 'Residential',
-    location: 'Bandra, Mumbai',
-    year: '2024',
-    status: 'In design',
-    area: '310 m²',
-    client: 'Private',
-    summary:
-      'Three rooms stacked and rotated on a 9-metre plot — each floor turns toward its own view and away from its neighbour.',
-    body: [
-      'A city plot with buildings on three sides and one good tree. The house stacks three volumes and rotates each a few degrees: the lower floor faces the lane, the middle floor faces the tree, the upper floor faces the sky. The rotations open triangular slots of terrace at every level — small, but in Bandra a triangle of outdoors is wealth.',
-      'The structure is a single central core; floors cantilever from it, which frees every corner for glass or garden.',
-    ],
-    materials: ['Central RCC core', 'Cantilevered plates', 'Micro-terracing at rotations', 'Perforated corten entry screen'],
-    featured: false,
-  },
-  {
-    slug: 'stepwell-museum',
-    index: 'PRJ-06',
-    name: 'Stepwell Museum',
-    typology: 'Cultural',
-    location: 'Ahmedabad, Gujarat',
+    location: 'Rawalpindi, Pakistan',
     year: '2025',
-    status: 'Competition',
-    area: '4,200 m²',
-    client: 'Competition entry',
+    status: 'Academic — awarded',
     summary:
-      'A museum that descends instead of rising — galleries step down around a sunken court, cooling as they go.',
+      'A folded concrete landmark whose roof rises and breaks like the ridgeline behind it — sealed mass from one approach, an open lantern from the next.',
     body: [
-      'The competition asked for a landmark. The entry proposes the opposite: almost nothing above the ground plane. Galleries wrap a square court and step down three levels, borrowing the section of the region’s stepwells — every level cooler, quieter and darker than the last, ending at a water court that tempers the whole building.',
-      'Visitors leave the way they came, climbing back toward daylight — the promenade is the exhibit.',
+      'Two families of walls trade places around the plan: blind board-formed concrete that holds the building shut against the road, and full-height glass that opens the halls to the park. Walking the perimeter, the Monument never shows both faces at once.',
+      'The roof is a single folded plate — flat concrete facets that lift, crease and fall across the plan. The folds are not decoration: each seam is a beam, each facet a span, and daylight enters the central hall through the breaks between them.',
+      'The scheme was developed as the Monument Design project in the sixth semester at the National College of Arts, Rawalpindi, where it was recognised with a certificate for excellent work.',
     ],
-    materials: ['Excavated stepped section', 'Self-shading court', 'Evaporative water floor', 'Local sandstone cladding'],
-    featured: false,
+    materials: ['Board-formed concrete', 'Structural glass curtain wall', 'Folded concrete plate roof', 'Local stone paving'],
+    cover: '/photos/monument-aerial.jpg',
+    images: [
+      { src: '/photos/monument-aerial.jpg', alt: 'Aerial view of the folded concrete roof of The Monument', caption: 'Aerial — the folded plate reads as a fifth elevation', wide: true },
+      { src: '/photos/monument-elevation.jpg', alt: 'Ground-level south elevation with glass curtain wall between concrete fins', caption: 'South elevation — mass and lantern', wide: true },
+      { src: '/photos/monument-views.jpg', alt: 'Three views of The Monument: two aerials and the entrance elevation', caption: 'Survey sheet — approach studies' },
+      { src: '/photos/monument-sketch.jpg', alt: 'Hand-drawn perspective sketch of the folded roof massing', caption: 'First massing sketch' },
+      { src: '/photos/monument-sketches.jpg', alt: 'A wall of concept sketches iterating the folded form', caption: 'Concept development — the fold, argued on paper', wide: true },
+    ],
+    videos: [
+      { src: '/video/monument-fly-1.mp4', caption: 'Aerial orbit — the fold against the hills' },
+      { src: '/video/monument-fly-2.mp4', caption: 'Descent to the entrance' },
+    ],
+    featured: true,
+    flagship: true,
+  },
+  {
+    slug: 'f1-champions-museum',
+    index: '02',
+    name: 'F1 Champions Museum',
+    typology: 'Cultural',
+    location: 'Hillside site',
+    year: '2025',
+    status: 'Design study',
+    summary:
+      'A museum of speed: planted concrete decks bank around the exhibition halls like a racing line, carrying champions’ cars up a hillside podium.',
+    body: [
+      'Each floor plate is drawn as a curve under load — wide at the straights, tight at the corners — so the building itself seems to be cornering. Deep cantilevered eyebrows shade continuous glass, and every parapet carries a planted verge.',
+      'Visitors climb through the halls the way a lap unfolds: paddock at grade, machines on the middle decks, trophies at the summit against the view. At dusk the interior lights up and the whole section reads through the glass.',
+    ],
+    materials: ['Post-tensioned concrete decks', 'Curved curtain wall', 'Planted parapets', 'Raking steel props'],
+    cover: '/photos/f1-full.jpg',
+    images: [
+      { src: '/photos/f1-full.jpg', alt: 'Full exterior view of the curved museum at golden hour with an F1 car in front' },
+      { src: '/photos/f1-terraces.jpg', alt: 'Close view of the curved planted terraces glowing at sunset' },
+      { src: '/photos/f1-entrance.jpg', alt: 'Museum entrance under the cantilever with an F1 car outside', wide: true },
+      { src: '/photos/f1-sheet.jpg', alt: 'Presentation sheet with seven labelled views of the museum', caption: 'Presentation sheet — entrance, facade and interior studies', wide: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'capital-business-tower',
+    index: '03',
+    name: 'Capital Business Tower + Margalla Residences',
+    typology: 'Mixed-use',
+    location: 'Islamabad, Pakistan',
+    year: '2024',
+    status: 'Design proposal',
+    summary:
+      'A woven exoskeleton of branching precast ribs shades offices and residences above a stepped public plaza at the foot of the Margalla Hills.',
+    body: [
+      'The lattice is structure, shade and identity in one move: ribs gather at the base like tree trunks, splitting as they climb to carry the floor loads and screen the low western sun.',
+      'A lower residential block shares the plaza, its own lattice opening wider where balconies and planting push through. Between the two, broad public steps descend past water to the street.',
+    ],
+    materials: ['Precast concrete lattice', 'High-performance glazing', 'Stone plaza steps', 'Sky terraces'],
+    cover: '/photos/tower-margalla.jpg',
+    images: [
+      { src: '/photos/tower-margalla.jpg', alt: 'The lattice-clad tower and residences above stepped public plaza' },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'district-general-hospital',
+    index: '04',
+    name: 'District General Hospital',
+    typology: 'Healthcare',
+    location: 'District site, Punjab',
+    year: '2024',
+    status: 'Design proposal',
+    summary:
+      'A low brick medical campus arranged around planted courtyards, with one legible emergency approach and wards that never lose the trees.',
+    body: [
+      'Rather than a single deep block, the hospital is broken into brick wings around courtyards, so every ward and waiting room borrows daylight and a view of planting. The emergency entrance is given its own canopy and its own road — legible at speed, day or night.',
+      'Brick was chosen for calm as much as economy: a material the region builds with well, laid in deep reveals that shade the windows and age gracefully.',
+    ],
+    materials: ['Load-bearing brick', 'Concrete canopies', 'Courtyard planting', 'Standing-seam roofs'],
+    cover: '/photos/hospital-aerial.jpg',
+    images: [
+      { src: '/photos/hospital-aerial.jpg', alt: 'Aerial view of the brick hospital campus with EMERGENCY entrance', wide: true },
+      { src: '/photos/hospital-roof.jpg', alt: 'Aerial view over the hospital roofscape and central courtyard', wide: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'brick-urban-commons',
+    index: '05',
+    name: 'Brick Urban Commons',
+    typology: 'Urban',
+    location: 'Inner-city infill',
+    year: '2024',
+    status: 'Design study',
+    summary:
+      'A mixed-use infill quarter in load-bearing brick — shops below, studios above, and a round assembly hall held in the court.',
+    body: [
+      'The project takes a leftover corner of the city and repairs it with a simple brick datum: two and three storeys, deep window reveals, parking absorbed along the kerb rather than in front yards.',
+      'Inside the block, a circular hall sits in the courtyard like a kiln — the one curved figure among straight walls, shared by the whole quarter.',
+    ],
+    materials: ['Load-bearing brick', 'Precast lintels', 'Timber-lined hall', 'Street planting'],
+    cover: '/photos/campus-brick.jpg',
+    images: [
+      { src: '/photos/campus-brick.jpg', alt: 'Four views of the brick infill quarter and its circular courtyard hall', wide: true },
+    ],
+  },
+  {
+    slug: 'golden-hour-villas',
+    index: '06',
+    name: 'Golden Hour Villas',
+    typology: 'Residential',
+    location: 'Suburban plots, Pakistan',
+    year: '2023–25',
+    status: 'Design series',
+    summary:
+      'A series of private houses that stage the evening: stucco and dark metal, deep balconies, and lighting designed for the hour the family comes home.',
+    body: [
+      'Each villa is composed for its street corner — a tall stair volume, a brick or slatted screen, a glass balcony — but all of them share the same discipline of warm render, dark metal and shadow.',
+      'The lighting is drawn like the architecture: concealed coves wash the entrance walls, gate slats glow from behind, and no fitting glares at a neighbour.',
+    ],
+    materials: ['Textured render', 'Dark metal slats', 'Glass balustrades', 'Brick feature panels'],
+    cover: '/photos/villa-terrace.jpg',
+    images: [
+      { src: '/photos/villa-crest.jpg', alt: 'Villa with angled roofline at sunset' },
+      { src: '/photos/villa-terrace.jpg', alt: 'Flat-roofed villa with glass balcony at sunset' },
+      { src: '/photos/villa-brick.jpg', alt: 'Villa with brick feature panel and roof terrace at sunset' },
+      { src: '/photos/villa-details.jpg', alt: 'Detail collage: gates, balconies, entrance lighting', caption: 'Detail sheet — gates, coves and thresholds', wide: true },
+    ],
+    featured: true,
+  },
+  {
+    slug: 'timber-bath-suites',
+    index: '07',
+    name: 'Timber Bath Suites',
+    typology: 'Interiors',
+    location: 'Private residences',
+    year: '2024',
+    status: 'Interior design',
+    summary:
+      'Compact bathrooms lined in warm timber, lit by a single continuous cove and a halo mirror — small rooms treated as seriously as facades.',
+    body: [
+      'The palette is deliberately narrow: pale timber boarding on every surface, a dark stone basin, glass instead of walls. With nothing else competing, the light does the architecture.',
+      'One cove runs the full perimeter of the ceiling; one halo sits behind the mirror. Both are warm, dimmable and completely concealed.',
+    ],
+    materials: ['Timber wall boarding', 'Stone vessel basins', 'Concealed LED coves', 'Frameless glass'],
+    cover: '/photos/interior-bath-2.jpg',
+    images: [
+      { src: '/photos/interior-bath-1.jpg', alt: 'Timber-lined bathroom with backlit mirror and stone basin', wide: true },
+      { src: '/photos/interior-bath-2.jpg', alt: 'Timber bathroom with halo mirror, dark door and glass shower', wide: true },
+    ],
   },
 ]
 
-export const featuredProjects = projects.filter((p) => p.featured)
+export type Poster = { src: string; alt: string; title: string; line: string }
+
+export const posters: Poster[] = [
+  {
+    src: '/photos/poster-brutalist.jpg',
+    alt: 'BRUTALIST — editorial poster over a concrete portal building',
+    title: 'BRUTALIST',
+    line: 'Form follows structure. Raw, honest, timeless.',
+  },
+  {
+    src: '/photos/poster-massive.jpg',
+    alt: 'MASSIVE — editorial poster over a folded-roof cinema',
+    title: 'MASSIVE',
+    line: 'Rigid. Raw. Real. Built with purpose, designed to endure.',
+  },
+]
+
+export const featuredProjects = projects.filter((p) => p.featured && !p.flagship)
+export const flagship = projects.find((p) => p.flagship)!
 
 export function getProject(slug: string | undefined) {
   return projects.find((p) => p.slug === slug)
@@ -163,6 +222,7 @@ export function getProject(slug: string | undefined) {
 
 export function adjacentProjects(slug: string) {
   const i = projects.findIndex((p) => p.slug === slug)
+  if (i === -1) return { prev: undefined, next: undefined }
   return {
     prev: projects[(i - 1 + projects.length) % projects.length],
     next: projects[(i + 1) % projects.length],
