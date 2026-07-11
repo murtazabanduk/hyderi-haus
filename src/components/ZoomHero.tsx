@@ -48,6 +48,7 @@ export default function ZoomHero() {
   const hudAlt = useRef<HTMLSpanElement>(null)
   const hudPhase = useRef<HTMLSpanElement>(null)
   const hudFill = useRef<HTMLDivElement>(null)
+  const hud = useRef<HTMLDivElement>(null)
   const slider = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -122,6 +123,13 @@ export default function ZoomHero() {
       if (strip.current) {
         strip.current.style.opacity = a.toFixed(3)
         strip.current.style.transform = `scaleX(${(0.82 + 0.18 * a).toFixed(4)}) scaleY(${(1.12 - 0.12 * a).toFixed(4)})`
+      }
+
+      // Instrument cluster reads the approach; it stands down once the
+      // letterboxed arrival card is in place so it never overlaps that text.
+      if (hud.current) {
+        hud.current.style.opacity = (1 - a).toFixed(3)
+        hud.current.style.pointerEvents = a > 0.3 ? 'none' : 'auto'
       }
 
       // Instruments.
@@ -233,7 +241,7 @@ export default function ZoomHero() {
           <p className="mono dimmed">CONCRETE · GLASS · FOLDED PLATE</p>
         </aside>
 
-        <div className="hero-hud" aria-hidden>
+        <div className="hero-hud" aria-hidden ref={hud}>
           <span className="mono hud-phase" ref={hudPhase}>
             AERIAL SURVEY
           </span>

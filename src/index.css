@@ -920,6 +920,22 @@ button {
   max-width: 52ch;
 }
 
+.studio-recognition {
+  margin-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+
+.studio-recognition-lede {
+  margin-top: 0.8rem;
+  max-width: 52ch;
+}
+
+.studio-certs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+}
+
 .studio-services ul {
   list-style: none;
   margin-top: 1.4rem;
@@ -1106,6 +1122,7 @@ button {
   .process-grid,
   .studio-teaser,
   .studio-grid,
+  .studio-certs-row,
   .contact-grid,
   .studio-mark {
     grid-template-columns: 1fr;

@@ -35,6 +35,35 @@ export default function Studio() {
         </Reveal>
       </div>
 
+      <section className="studio-recognition">
+        <span className="mono kicker">RECOGNITION</span>
+        <p className="studio-recognition-lede">
+          Alongside the studio, {site.principal} volunteers and participates at industry gatherings across Pakistan.
+        </p>
+        <div className="studio-certs-row">
+          <Reveal>
+            <figure className="studio-cert">
+              <img
+                src="/photos/certificate-iapex26.jpg"
+                alt="Institute of Architects Pakistan, Rawalpindi-Islamabad Chapter certificate acknowledging Hussain Mufadal for volunteering at IAPEX26"
+                loading="lazy"
+              />
+              <figcaption className="mono">VOLUNTEER, IAPEX26 — INSTITUTE OF ARCHITECTS PAKISTAN, ISLAMABAD, 2026</figcaption>
+            </figure>
+          </Reveal>
+          <Reveal delay={100}>
+            <figure className="studio-cert">
+              <img
+                src="/photos/certificate-ndma-dawe.jpg"
+                alt="NDMA Pakistan certificate of participation for Hussain at the Disaster Early Warning Tech Expo 2025"
+                loading="lazy"
+              />
+              <figcaption className="mono">PARTICIPANT, DISASTER EARLY WARNING TECH EXPO — NDMA PAKISTAN, 2025</figcaption>
+            </figure>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="studio-services">
         <span className="mono kicker">WHAT THE STUDIO DOES</span>
         <ul>
