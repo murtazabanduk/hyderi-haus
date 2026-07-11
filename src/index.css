@@ -1156,6 +1156,14 @@ button {
     gap: 0.3rem 1rem;
     font-size: 0.58rem;
   }
+
+  /* Backdrop-filter blur is compositor-heavy on mobile GPUs, and these
+     panels repaint every scroll frame while they fade/slide in. A solid
+     tinted background reads almost identically without the cost. */
+  .hero-panel {
+    backdrop-filter: none;
+    background: rgba(14, 12, 9, 0.82);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

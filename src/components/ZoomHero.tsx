@@ -118,7 +118,7 @@ export default function ZoomHero() {
       // Scrub the flythrough. Dim and defocus as the ground stage takes over.
       const dim = smooth((p - 0.8) / 0.14)
       if (aerial.current) {
-        aerial.current.style.filter = `brightness(${(1 - 0.72 * dim).toFixed(3)}) saturate(${(1 + 0.08 * smooth(p / 0.5)).toFixed(3)}) blur(${(7 * dim).toFixed(2)}px)`
+        aerial.current.style.filter = `brightness(${(1 - 0.72 * dim).toFixed(3)}) saturate(${(1 + 0.08 * smooth(p / 0.5)).toFixed(3)}) blur(${(4 * dim).toFixed(2)}px)`
       }
       if (vid && vid.readyState >= 1) {
         const t = videoTimeAt(p)
