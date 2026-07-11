@@ -216,11 +216,10 @@ button {
 .hero-aerial {
   position: absolute;
   inset: 0;
-  transform-origin: 57% 60%;
-  will-change: transform, filter;
+  will-change: filter;
 }
 
-.hero-aerial img {
+.hero-aerial video {
   width: 100%;
   height: 100%;
   object-fit: cover;

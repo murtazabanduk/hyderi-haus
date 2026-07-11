@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom'
 import { site } from '../data/site'
 
 // ---------------------------------------------------------------------------
-// The flagship feature: a scroll-driven approach to The Monument.
-// Scrolling the 430vh track zooms from the wide aerial into the entrance,
-// stretches through a seam, then resolves into a letterboxed ground-level
-// elevation — with project information revealed stage by stage. A slider
-// gives the same journey without scrolling. All motion is written straight
-// to the DOM inside one rAF loop; React never re-renders during the ride.
+// The flagship feature: a scroll-scrubbed flythrough of The Monument.
+// Scrolling the 430vh track scrubs an actual aerial video — fast between
+// shots, held flat while a shot is on screen so project information can
+// reveal against it — then resolves into a letterboxed ground-level
+// elevation photo. A slider gives the same journey without scrolling. All
+// motion is written straight to the DOM inside one rAF loop; React never
+// re-renders during the ride.
 // ---------------------------------------------------------------------------
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
@@ -16,16 +17,41 @@ const smooth = (t: number) => {
   const x = clamp01(t)
   return x * x * (3 - 2 * x)
 }
-/** Gaussian bump centred at c — powers the elastic "stretch" at stage seams. */
-const bump = (p: number, c: number, w: number) => Math.exp(-((p - c) ** 2) / (2 * w * w))
 /** Visibility window [a, b] with fade width f. */
 const win = (p: number, a: number, b: number, f = 0.06) =>
   smooth((p - a) / f) * (1 - smooth((p - (b - f)) / f))
 
+// Scroll-progress -> video-time keyframes. Equal `t` between two consecutive
+// points is a hold (the shot freezes there); differing `t` is a scrubbed
+// ramp between shots, eased with `smooth` so it accelerates then settles.
+const RIDE: { p: number; t: number }[] = [
+  { p: 0.0, t: 0.0 }, // aerial wide, whole building against the ridge — hold
+  { p: 0.13, t: 0.0 },
+  { p: 0.33, t: 1.25 }, // swipe down — closer aerial, still reads as the whole building
+  { p: 0.46, t: 1.25 }, // hold
+  { p: 0.66, t: 3.88 }, // swipe right — around to the folded roof / glass corner
+  { p: 0.8, t: 3.88 }, // hold
+  { p: 0.92, t: 4.85 }, // speed up — into the arrival shot
+  { p: 1.0, t: 4.85 }, // hold, cross-fades into the static elevation photo
+]
+
+const videoTimeAt = (p: number) => {
+  for (let i = 1; i < RIDE.length; i++) {
+    const a = RIDE[i - 1]
+    const b = RIDE[i]
+    if (p <= b.p) {
+      if (b.t === a.t) return a.t
+      return a.t + (b.t - a.t) * smooth((p - a.p) / (b.p - a.p))
+    }
+  }
+  return RIDE[RIDE.length - 1].t
+}
+
 const PHASES: [number, string][] = [
-  [0.3, 'AERIAL SURVEY'],
-  [0.62, 'DESCENT'],
-  [0.9, 'ARRIVAL'],
+  [0.13, 'AERIAL SURVEY'],
+  [0.46, 'DESCENT'],
+  [0.8, 'ORBIT'],
+  [0.92, 'ARRIVAL'],
   [1.01, 'ON SITE'],
 ]
 
@@ -36,6 +62,7 @@ export default function ZoomHero() {
 
   const track = useRef<HTMLDivElement>(null)
   const aerial = useRef<HTMLDivElement>(null)
+  const aerialVideo = useRef<HTMLVideoElement>(null)
   const dusk = useRef<HTMLDivElement>(null)
   const intro = useRef<HTMLDivElement>(null)
   const panelA = useRef<HTMLDivElement>(null)
@@ -55,6 +82,15 @@ export default function ZoomHero() {
     if (reduced) return
     const el = track.current
     if (!el) return
+
+    // iOS Safari won't seek a <video> that has never played. A silent
+    // play/pause kick right away primes the decoder for programmatic scrubbing.
+    const vid = aerialVideo.current
+    if (vid) {
+      vid.play()
+        .then(() => vid.pause())
+        .catch(() => {})
+    }
 
     let top = 0
     let span = 1
@@ -79,41 +115,47 @@ export default function ZoomHero() {
       if (p === last) return
       last = p
 
-      // Aerial: zoom toward the entrance, elastic stretch through the seam,
-      // then dim and defocus as the ground stage takes over.
-      const zoom = 1 + 1.5 * smooth(p / 0.72)
-      const stretch = bump(p, 0.4, 0.05)
-      const dim = smooth((p - 0.56) / 0.16)
+      // Scrub the flythrough. Dim and defocus as the ground stage takes over.
+      const dim = smooth((p - 0.8) / 0.14)
       if (aerial.current) {
-        aerial.current.style.transform = `scale(${(zoom * (1 + 0.09 * stretch)).toFixed(4)}, ${(zoom * (1 - 0.055 * stretch)).toFixed(4)})`
-        aerial.current.style.filter = `brightness(${(1 - 0.68 * dim).toFixed(3)}) saturate(${(1 + 0.12 * smooth(p / 0.5)).toFixed(3)}) blur(${(7 * dim).toFixed(2)}px)`
+        aerial.current.style.filter = `brightness(${(1 - 0.72 * dim).toFixed(3)}) saturate(${(1 + 0.08 * smooth(p / 0.5)).toFixed(3)}) blur(${(7 * dim).toFixed(2)}px)`
+      }
+      if (vid && vid.readyState >= 1) {
+        const t = videoTimeAt(p)
+        if (Math.abs(vid.currentTime - t) > 0.008) {
+          try {
+            vid.currentTime = t
+          } catch {
+            /* seek can throw if metadata isn't ready yet; next frame retries */
+          }
+        }
       }
 
-      // Dusk wash deepens on the way down.
-      if (dusk.current) dusk.current.style.opacity = (0.5 * smooth((p - 0.18) / 0.45)).toFixed(3)
+      // Dusk wash deepens across the ride.
+      if (dusk.current) dusk.current.style.opacity = (0.5 * smooth((p - 0.15) / 0.6)).toFixed(3)
 
       // Intro wordmark.
       if (intro.current) {
-        const o = 1 - smooth(p / 0.075)
+        const o = 1 - smooth(p / 0.09)
         intro.current.style.opacity = o.toFixed(3)
-        intro.current.style.transform = `translateY(${(-38 * smooth(p / 0.075)).toFixed(1)}px)`
+        intro.current.style.transform = `translateY(${(-38 * smooth(p / 0.09)).toFixed(1)}px)`
         intro.current.style.visibility = o <= 0.001 ? 'hidden' : 'visible'
       }
 
-      // Info panels.
+      // Info panels — timed to the two holds (low pass, then the corner reflection).
       if (panelA.current) {
-        const o = win(p, 0.13, 0.45)
+        const o = win(p, 0.34, 0.46, 0.04)
         panelA.current.style.opacity = o.toFixed(3)
-        panelA.current.style.transform = `translateY(${(30 * (1 - smooth((p - 0.13) / 0.06))).toFixed(1)}px)`
+        panelA.current.style.transform = `translateY(${(30 * (1 - smooth((p - 0.34) / 0.05))).toFixed(1)}px)`
       }
       if (panelB.current) {
-        const o = win(p, 0.42, 0.66)
+        const o = win(p, 0.67, 0.8, 0.04)
         panelB.current.style.opacity = o.toFixed(3)
-        panelB.current.style.transform = `translateY(${(30 * (1 - smooth((p - 0.42) / 0.06))).toFixed(1)}px)`
+        panelB.current.style.transform = `translateY(${(30 * (1 - smooth((p - 0.67) / 0.05))).toFixed(1)}px)`
       }
 
       // Arrival: letterbox bars close in, the elevation stretches to width.
-      const a = smooth((p - 0.6) / 0.14)
+      const a = smooth((p - 0.85) / 0.13)
       if (arrive.current) {
         arrive.current.style.opacity = a > 0 ? '1' : '0'
         arrive.current.style.pointerEvents = a > 0.7 ? 'auto' : 'none'
@@ -133,7 +175,7 @@ export default function ZoomHero() {
       }
 
       // Instruments.
-      const approach = smooth(p / 0.75)
+      const approach = smooth(p / 0.92)
       if (hudPct.current) hudPct.current.textContent = `${String(Math.round(p * 100)).padStart(3, '0')}%`
       if (hudAlt.current) hudAlt.current.textContent = `ALT ${String(Math.round(320 * (1 - approach))).padStart(3, '0')} M`
       if (hudFill.current) hudFill.current.style.height = `${(p * 100).toFixed(1)}%`
@@ -188,7 +230,15 @@ export default function ZoomHero() {
     <section className="hero-track" ref={track} data-hero aria-label="Featured project — The Monument">
       <div className="hero-stage">
         <div className="hero-aerial" ref={aerial}>
-          <img src="/photos/monument-aerial.jpg" alt="Aerial view of The Monument, a folded concrete cultural building among trees" />
+          <video
+            ref={aerialVideo}
+            src="/video/monument-fly-1.mp4"
+            poster="/photos/monument-aerial.jpg"
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden
+          />
         </div>
 
         <div className="hero-dusk" ref={dusk} aria-hidden />
@@ -263,7 +313,7 @@ export default function ZoomHero() {
           min={0}
           max={1000}
           defaultValue={0}
-          aria-label="Zoom into The Monument"
+          aria-label="Scrub the approach to The Monument"
         />
       </div>
     </section>
