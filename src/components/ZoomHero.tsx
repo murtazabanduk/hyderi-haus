@@ -94,11 +94,19 @@ export default function ZoomHero() {
 
     let top = 0
     let span = 1
+    let curP = 0
+    let primed = false
     const measure = () => {
       top = el.getBoundingClientRect().top + window.scrollY
       span = Math.max(1, el.offsetHeight - window.innerHeight)
+      if (!primed) {
+        // First measurement: snap straight to the real position instead of
+        // easing up from 0, so a mid-page load/refresh doesn't rewind.
+        curP = clamp01((window.scrollY - top) / span)
+        primed = true
+      }
       last = -1 // invalidate so the next apply() rewrites everything
-      onScroll()
+      if (!raf) raf = requestAnimationFrame(apply)
     }
 
     const sl = slider.current
@@ -109,9 +117,16 @@ export default function ZoomHero() {
 
     let last = -1
     let raf = 0
+    // Eased follow rather than a hard jump to scrollY every frame: closes
+    // ~28% of the gap to the real scroll position each tick, so fast/jerky
+    // wheel and trackpad deltas read as a fluid glide instead of a snap.
+    const EASE = 0.28
     const apply = () => {
-      raf = 0
-      const p = clamp01((window.scrollY - top) / span)
+      const targetP = clamp01((window.scrollY - top) / span)
+      curP += (targetP - curP) * EASE
+      if (Math.abs(targetP - curP) < 0.0004) curP = targetP
+      const p = curP
+      raf = p === targetP ? 0 : requestAnimationFrame(apply)
       if (p === last) return
       last = p
 
@@ -185,7 +200,8 @@ export default function ZoomHero() {
       }
       if (sl && document.activeElement !== sl) sl.value = String(Math.round(p * 1000))
     }
-    // Scroll-driven, rAF-coalesced: no work while the page is idle.
+    // Scroll-driven: wakes the eased rAF loop, which then keeps re-scheduling
+    // itself each frame until curP has caught up to the scroll target.
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(apply)
     }
