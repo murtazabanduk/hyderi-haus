@@ -47,6 +47,11 @@ const videoTimeAt = (p: number) => {
   return RIDE[RIDE.length - 1].t
 }
 
+// Desktop gets the upscaled all-intra encode (every frame a keyframe, so a
+// scrub seek decodes exactly one frame); phones keep the small file.
+const HD_SRC = '/video/monument-fly-1-hd.mp4'
+const SD_SRC = '/video/monument-fly-1.mp4'
+
 const PHASES: [number, string][] = [
   [0.13, 'AERIAL SURVEY'],
   [0.46, 'DESCENT'],
@@ -58,6 +63,9 @@ const PHASES: [number, string][] = [
 export default function ZoomHero() {
   const [reduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const [videoSrc] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 900px)').matches ? HD_SRC : SD_SRC,
   )
 
   const track = useRef<HTMLDivElement>(null)
@@ -117,13 +125,36 @@ export default function ZoomHero() {
 
     let last = -1
     let raf = 0
-    // Eased follow rather than a hard jump to scrollY every frame: closes
-    // ~28% of the gap to the real scroll position each tick, so fast/jerky
-    // wheel and trackpad deltas read as a fluid glide instead of a snap.
-    const EASE = 0.28
-    const apply = () => {
+    let lastTs = 0
+    // Time-based easing (τ=50ms) so feel is identical at 60Hz and 120Hz.
+    // 1 - e^(-16.67/50) ≈ 0.284, matching the previous per-tick EASE=0.28.
+    const TAU = 50
+    // Seek coalescing: only issue a currentTime write after the previous seek
+    // completes, avoiding the seek-cancel storm that causes stutter.
+    let pendingSeekT = -1
+    const doSeek = (t: number) => {
+      if (!vid || vid.readyState < 1) return
+      pendingSeekT = t
+      if (seekingRef) return
+      seekingRef = true
+      seekReallyPending = false
+      try { vid.currentTime = t } catch { seekingRef = false }
+    }
+    // Use plain mutable vars (not React state) so we don't need a ref object.
+    let seekingRef = false
+    let seekReallyPending = false
+    const onSeeked = () => {
+      seekingRef = false
+      if (seekReallyPending) doSeek(pendingSeekT)
+    }
+    vid?.addEventListener('seeked', onSeeked)
+
+    const apply = (ts: number) => {
+      const dt = lastTs ? Math.min(ts - lastTs, 100) : 16.67
+      lastTs = ts
+      const factor = 1 - Math.exp(-dt / TAU)
       const targetP = clamp01((window.scrollY - top) / span)
-      curP += (targetP - curP) * EASE
+      curP += (targetP - curP) * factor
       if (Math.abs(targetP - curP) < 0.0004) curP = targetP
       const p = curP
       raf = p === targetP ? 0 : requestAnimationFrame(apply)
@@ -137,11 +168,13 @@ export default function ZoomHero() {
       }
       if (vid && vid.readyState >= 1) {
         const t = videoTimeAt(p)
-        if (Math.abs(vid.currentTime - t) > 0.008) {
-          try {
-            vid.currentTime = t
-          } catch {
-            /* seek can throw if metadata isn't ready yet; next frame retries */
+        if (Math.abs((pendingSeekT >= 0 ? pendingSeekT : vid.currentTime) - t) > 0.008) {
+          if (seekingRef) {
+            // Previous seek still in flight — just update the target; onSeeked will fire it.
+            pendingSeekT = t
+            seekReallyPending = true
+          } else {
+            doSeek(t)
           }
         }
       }
@@ -219,6 +252,7 @@ export default function ZoomHero() {
       window.removeEventListener('resize', measure)
       window.removeEventListener('load', measure)
       sl?.removeEventListener('input', onSlide)
+      vid?.removeEventListener('seeked', onSeeked)
     }
   }, [reduced])
 
@@ -248,7 +282,7 @@ export default function ZoomHero() {
         <div className="hero-aerial" ref={aerial}>
           <video
             ref={aerialVideo}
-            src="/video/monument-fly-1.mp4"
+            src={videoSrc}
             poster="/photos/monument-aerial.jpg"
             muted
             playsInline
