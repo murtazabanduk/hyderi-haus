@@ -61,9 +61,11 @@ const PHASES: [number, string][] = [
 ]
 
 export default function ZoomHero() {
-  const [reduced] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  )
+  const [reduced] = useState(() => true)
+  // ponytail: animated hero disabled by default — restore live below to bring the scroll-scrub hero back
+  // const [reduced] = useState(
+  //   () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  // )
   const [videoSrc] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(min-width: 900px)').matches ? HD_SRC : SD_SRC,
   )
