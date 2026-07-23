@@ -4,6 +4,7 @@ import ProjectCard from '../components/ProjectCard'
 import Reveal from '../components/Reveal'
 import { featuredProjects, posters } from '../data/projects'
 import { site } from '../data/site'
+import { srcSet } from '../lib/srcset'
 
 export default function Home() {
   return (
@@ -35,7 +36,13 @@ export default function Home() {
         <div className="print-band">
           <Reveal>
             <figure className="poster poster-l">
-              <img src={posters[0].src} alt={posters[0].alt} loading="lazy" />
+              <img
+                src={posters[0].src}
+                srcSet={srcSet(posters[0].src)}
+                sizes="(min-width: 900px) 30vw, 100vw"
+                alt={posters[0].alt}
+                loading="lazy"
+              />
             </figure>
           </Reveal>
           <Reveal delay={120}>
@@ -49,7 +56,13 @@ export default function Home() {
           </Reveal>
           <Reveal delay={200}>
             <figure className="poster poster-r">
-              <img src={posters[1].src} alt={posters[1].alt} loading="lazy" />
+              <img
+                src={posters[1].src}
+                srcSet={srcSet(posters[1].src)}
+                sizes="(min-width: 900px) 30vw, 100vw"
+                alt={posters[1].alt}
+                loading="lazy"
+              />
             </figure>
           </Reveal>
         </div>
@@ -63,7 +76,13 @@ export default function Home() {
         <div className="process-grid">
           <Reveal>
             <figure className="process-fig">
-              <img src="/photos/monument-sketches.jpg" alt="Wall of concept sketches iterating the folded form of The Monument" loading="lazy" />
+              <img
+                src="/photos/monument-sketches.jpg"
+                srcSet={srcSet('/photos/monument-sketches.jpg')}
+                sizes="(min-width: 900px) 55vw, 100vw"
+                alt="Wall of concept sketches iterating the folded form of The Monument"
+                loading="lazy"
+              />
               <figcaption className="mono">CONCEPT WALL — THE MONUMENT</figcaption>
             </figure>
           </Reveal>
@@ -76,7 +95,13 @@ export default function Home() {
             </Reveal>
             <Reveal delay={180}>
               <figure className="process-fig-sm">
-                <img src="/photos/monument-sketch.jpg" alt="Hand-drawn perspective sketch of the folded roof massing" loading="lazy" />
+                <img
+                  src="/photos/monument-sketch.jpg"
+                  srcSet={srcSet('/photos/monument-sketch.jpg')}
+                  sizes="(min-width: 900px) 30vw, 100vw"
+                  alt="Hand-drawn perspective sketch of the folded roof massing"
+                  loading="lazy"
+                />
                 <figcaption className="mono">FIRST MASSING SKETCH</figcaption>
               </figure>
             </Reveal>

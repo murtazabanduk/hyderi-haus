@@ -1,11 +1,18 @@
 import { Link } from 'react-router-dom'
 import type { Project } from '../data/projects'
+import { srcSet } from '../lib/srcset'
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (
     <Link className="pcard" to={`/work/${project.slug}`}>
       <figure className="pcard-fig">
-        <img src={project.cover} alt={project.name} loading="lazy" />
+        <img
+          src={project.cover}
+          srcSet={srcSet(project.cover)}
+          sizes="(min-width: 900px) 45vw, 100vw"
+          alt={project.name}
+          loading="lazy"
+        />
       </figure>
       <div className="pcard-meta">
         <span className="mono pcard-idx">{project.index}</span>

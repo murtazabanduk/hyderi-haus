@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { site } from '../data/site'
+import { srcSet } from '../lib/srcset'
 
 // ---------------------------------------------------------------------------
 // The flagship feature: a scroll-scrubbed flythrough of The Monument.
@@ -262,7 +263,12 @@ export default function ZoomHero() {
   if (reduced) {
     return (
       <section className="hero-static" data-hero>
-        <img src="/photos/monument-aerial.jpg" alt="Aerial view of The Monument, a folded concrete cultural building" />
+        <img
+          src="/photos/monument-aerial.jpg"
+          srcSet={srcSet('/photos/monument-aerial.jpg')}
+          sizes="100vw"
+          alt="Aerial view of The Monument, a folded concrete cultural building"
+        />
         <div className="hero-static-body">
           <p className="mono kicker">RAWALPINDI · PAKISTAN</p>
           <h1 className="hero-word">{site.wordmark}</h1>
