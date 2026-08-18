@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/murtazabanduk/archy site/.codex/hooks/lint-on-edit.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/murtazabanduk/archy site/.codex/hooks/check-media-size.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}

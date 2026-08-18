@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
+import Picture from '../components/Picture'
 import ZoomHero from '../components/ZoomHero'
 import ProjectCard from '../components/ProjectCard'
 import Reveal from '../components/Reveal'
 import { featuredProjects, posters } from '../data/projects'
 import { site } from '../data/site'
-import { srcSet } from '../lib/srcset'
+import { dimsFor } from '../lib/srcset'
 
 export default function Home() {
   return (
@@ -36,13 +37,19 @@ export default function Home() {
         <div className="print-band">
           <Reveal>
             <figure className="poster poster-l">
-              <img
-                src={posters[0].src}
-                srcSet={srcSet(posters[0].src)}
-                sizes="(min-width: 900px) 30vw, 100vw"
-                alt={posters[0].alt}
-                loading="lazy"
-              />
+              {(() => {
+                const { fullW, fullH } = dimsFor(posters[0].src)
+                return (
+                  <Picture
+                    src={posters[0].src}
+                    sizes="(min-width: 900px) 30vw, 100vw"
+                    width={fullW}
+                    height={fullH}
+                    loading="lazy"
+                    alt={posters[0].alt}
+                  />
+                )
+              })()}
             </figure>
           </Reveal>
           <Reveal delay={120}>
@@ -56,13 +63,19 @@ export default function Home() {
           </Reveal>
           <Reveal delay={200}>
             <figure className="poster poster-r">
-              <img
-                src={posters[1].src}
-                srcSet={srcSet(posters[1].src)}
-                sizes="(min-width: 900px) 30vw, 100vw"
-                alt={posters[1].alt}
-                loading="lazy"
-              />
+              {(() => {
+                const { fullW, fullH } = dimsFor(posters[1].src)
+                return (
+                  <Picture
+                    src={posters[1].src}
+                    sizes="(min-width: 900px) 30vw, 100vw"
+                    width={fullW}
+                    height={fullH}
+                    loading="lazy"
+                    alt={posters[1].alt}
+                  />
+                )
+              })()}
             </figure>
           </Reveal>
         </div>
@@ -76,13 +89,19 @@ export default function Home() {
         <div className="process-grid">
           <Reveal>
             <figure className="process-fig">
-              <img
-                src="/photos/monument-sketches.jpg"
-                srcSet={srcSet('/photos/monument-sketches.jpg')}
-                sizes="(min-width: 900px) 55vw, 100vw"
-                alt="Wall of concept sketches iterating the folded form of The Monument"
-                loading="lazy"
-              />
+              {(() => {
+                const { fullW, fullH } = dimsFor('/photos/monument-sketches.jpg')
+                return (
+                  <Picture
+                    src="/photos/monument-sketches.jpg"
+                    sizes="(min-width: 900px) 55vw, 100vw"
+                    width={fullW}
+                    height={fullH}
+                    loading="lazy"
+                    alt="Wall of concept sketches iterating the folded form of The Monument"
+                  />
+                )
+              })()}
               <figcaption className="mono">CONCEPT WALL — THE MONUMENT</figcaption>
             </figure>
           </Reveal>
@@ -95,13 +114,19 @@ export default function Home() {
             </Reveal>
             <Reveal delay={180}>
               <figure className="process-fig-sm">
-                <img
-                  src="/photos/monument-sketch.jpg"
-                  srcSet={srcSet('/photos/monument-sketch.jpg')}
-                  sizes="(min-width: 900px) 30vw, 100vw"
-                  alt="Hand-drawn perspective sketch of the folded roof massing"
-                  loading="lazy"
-                />
+                {(() => {
+                  const { fullW, fullH } = dimsFor('/photos/monument-sketch.jpg')
+                  return (
+                    <Picture
+                      src="/photos/monument-sketch.jpg"
+                      sizes="(min-width: 900px) 30vw, 100vw"
+                      width={fullW}
+                      height={fullH}
+                      loading="lazy"
+                      alt="Hand-drawn perspective sketch of the folded roof massing"
+                    />
+                  )
+                })()}
                 <figcaption className="mono">FIRST MASSING SKETCH</figcaption>
               </figure>
             </Reveal>
@@ -114,7 +139,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sec sec-studio-teaser">
+      <section className="sec sec-dark sec-studio-teaser">
         <div className="studio-teaser">
           <Reveal>
             <div>
@@ -130,7 +155,19 @@ export default function Home() {
           </Reveal>
           <Reveal delay={140}>
             <figure className="studio-cert">
-              <img src="/photos/certificate.jpg" alt="Certificate for excellent work awarded to Hussain Hyderi, National College of Arts Rawalpindi" loading="lazy" />
+              {(() => {
+                const { fullW, fullH } = dimsFor('/photos/certificate.jpg')
+                return (
+                  <Picture
+                    src="/photos/certificate.jpg"
+                    alt="Certificate for excellent work awarded to Hussain Hyderi, National College of Arts Rawalpindi"
+                    sizes="(min-width: 900px) 30vw, 100vw"
+                    width={fullW}
+                    height={fullH}
+                    loading="lazy"
+                  />
+                )
+              })()}
               <figcaption className="mono">CERTIFICATE FOR EXCELLENT WORK — NCA, 2025</figcaption>
             </figure>
           </Reveal>

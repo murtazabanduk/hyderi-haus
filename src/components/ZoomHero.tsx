@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { site } from '../data/site'
-import { srcSet } from '../lib/srcset'
+
 
 // ---------------------------------------------------------------------------
 // The flagship feature: a scroll-scrubbed flythrough of The Monument.
@@ -62,11 +62,13 @@ const PHASES: [number, string][] = [
 ]
 
 export default function ZoomHero() {
+  // ponytail: hero video is dormant by default — keep reduced true until the scroll-scrub ride is re-enabled
   const [reduced] = useState(() => true)
   // ponytail: animated hero disabled by default — restore live below to bring the scroll-scrub hero back
   // const [reduced] = useState(
   //   () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   // )
+
   const [videoSrc] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(min-width: 900px)').matches ? HD_SRC : SD_SRC,
   )
@@ -263,12 +265,19 @@ export default function ZoomHero() {
   if (reduced) {
     return (
       <section className="hero-static" data-hero>
-        <img
-          src="/photos/monument-aerial.jpg"
-          srcSet={srcSet('/photos/monument-aerial.jpg')}
-          sizes="100vw"
-          alt="Aerial view of The Monument, a folded concrete cultural building"
-        />
+        <picture>
+          <source type="image/avif" srcSet="/photos/monument-aerial-sm.avif 800w, /photos/monument-aerial.avif 1296w" sizes="100vw" />
+          <img
+            src="/photos/monument-aerial.jpg"
+            srcSet="/photos/monument-aerial-sm.jpg 800w, /photos/monument-aerial.jpg 1296w"
+            sizes="100vw"
+            width={1296}
+            height={730}
+            fetchPriority="high"
+            alt="Aerial view of The Monument, a folded concrete cultural building"
+          />
+        </picture>
+
         <div className="hero-static-body">
           <p className="mono kicker">RAWALPINDI · PAKISTAN</p>
           <h1 className="hero-word">{site.wordmark}</h1>
@@ -308,7 +317,13 @@ export default function ZoomHero() {
             <span className="mono ember">THE MONUMENT</span>
           </div>
           <div className="hero-strip" ref={strip}>
-            <img src="/photos/monument-elevation.jpg" alt="Ground-level south elevation of The Monument: glass curtain wall between board-formed concrete walls" />
+            <img
+              src="/photos/monument-elevation.jpg"
+              width={1296}
+              height={306}
+              loading="lazy"
+              alt="Ground-level south elevation of The Monument: glass curtain wall between board-formed concrete walls"
+            />
           </div>
           <div className="hero-bar hero-bar-bot" ref={barBot}>
             <div className="hero-stats mono">

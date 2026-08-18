@@ -1,7 +1,8 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
+import Picture from '../components/Picture'
 import Reveal from '../components/Reveal'
 import { adjacentProjects, getProject } from '../data/projects'
-import { srcSet } from '../lib/srcset'
+import { dimsFor } from '../lib/srcset'
 
 export default function WorkDetail() {
   const { slug } = useParams()
@@ -12,7 +13,10 @@ export default function WorkDetail() {
   return (
     <main className="wd">
       <header className="wd-hero">
-        <img src={project.cover} srcSet={srcSet(project.cover)} sizes="100vw" alt={project.name} />
+        {(() => {
+          const { fullW, fullH } = dimsFor(project.cover)
+          return <Picture src={project.cover} sizes="100vw" width={fullW} height={fullH} loading="eager" alt={project.name} />
+        })()}
         <div className="wd-scrim">
           <span className="mono kicker">
             {project.index} — {project.typology.toUpperCase()}
@@ -66,13 +70,19 @@ export default function WorkDetail() {
         {project.images.map((img) => (
           <Reveal key={img.src} className={img.wide ? 'g-wide' : ''}>
             <figure>
-              <img
-                src={img.src}
-                srcSet={srcSet(img.src)}
-                sizes={img.wide ? '100vw' : '(min-width: 900px) 45vw, 100vw'}
-                alt={img.alt}
-                loading="lazy"
-              />
+              {(() => {
+                const { fullW, fullH } = dimsFor(img.src)
+                return (
+                  <Picture
+                    src={img.src}
+                    sizes={img.wide ? '100vw' : '(min-width: 900px) 45vw, 100vw'}
+                    width={fullW}
+                    height={fullH}
+                    loading="lazy"
+                    alt={img.alt}
+                  />
+                )
+              })()}
               {img.caption && <figcaption className="mono">{img.caption.toUpperCase()}</figcaption>}
             </figure>
           </Reveal>

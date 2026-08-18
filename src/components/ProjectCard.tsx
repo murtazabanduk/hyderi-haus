@@ -1,17 +1,21 @@
 import { Link } from 'react-router-dom'
 import type { Project } from '../data/projects'
-import { srcSet } from '../lib/srcset'
+import Picture from './Picture'
+import { dimsFor } from '../lib/srcset'
 
 export default function ProjectCard({ project }: { project: Project }) {
+  const { fullW, fullH } = dimsFor(project.cover)
+
   return (
     <Link className="pcard" to={`/work/${project.slug}`}>
       <figure className="pcard-fig">
-        <img
+        <Picture
           src={project.cover}
-          srcSet={srcSet(project.cover)}
           sizes="(min-width: 900px) 45vw, 100vw"
-          alt={project.name}
+          width={fullW}
+          height={fullH}
           loading="lazy"
+          alt={project.name}
         />
       </figure>
       <div className="pcard-meta">
